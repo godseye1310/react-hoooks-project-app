@@ -5,6 +5,7 @@ import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
 
 //Defining the emailReducer Function//
+//reducerfn(state,action) --> [state] gives latest state, [action] comes from dispatch fn//
 const emailReducer = (state, action) => {
 	if (action.type === "USER_INPUT") {
 		return { value: action.payload, isValid: action.payload.includes("@") };
@@ -20,13 +21,13 @@ const passwordReducer = (state, action) => {
 		return { value: action.payload, isValid: action.payload.trim().length > 6 };
 	}
 	if (action.type === "INPUT_BLUR") {
-		return { value: state.value, isVaild: state.value.trim().length > 6 };
+		return { value: state.value, isValid: state.value.trim().length > 6 };
 	}
 	return { value: "", isValid: false };
 };
 
 //useReducer Syntax//
-// const [state, dispatchFunction] = useReducer(reducerFunction, initialState, initialFunction(optional))
+// const [state, dispatchFunction] = useReducer(reducerFunction, initialState, initialFunction(optional))//
 const Login = (props) => {
 	// const [enteredEmail, setEnteredEmail] = useState("");
 	// const [emailIsValid, setEmailIsValid] = useState();
@@ -41,37 +42,42 @@ const Login = (props) => {
 	});
 	const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
 		value: "",
-		isVaild: null,
+		isValid: null,
 	});
 
-	// //UseEffect with utilitising Dependencies Array so that the effect runs whenever there is a change is given dependencies//
-	// useEffect(() => {
-	// 	const timer = setTimeout(() => {
-	// 		// console.log("Checking form entry...");
-	// 		setFormIsValid(enteredEmail.includes("@") && enteredPassword.trim().length > 6);
-	// 	}, 500);
+	// Destructuring an Object to extract only the "VALIDITY (of input field)" of emailState & passwordState objects///
+	const { isValid: emailIsValid } = emailState;
+	const { isValid: passwordIsValid } = passwordState;
+	//Passing this "VALIDITY" as Dependencies of useEffect so it only gets triggered if the Validity of state has changed and not on value change//
 
-	// 	//CLEANUP Fn RUNS Before the sideEffect function from 2nd time onwards Or ONLY after the useEffect has run once(component rendered for first time) //
-	// 	//Cleanup fn doesnt run when the component is Rendered FIRST time//
-	// 	//Cleanup fn runs if/when the component gets unmount (though side effect doesnt run)//
-	// 	return () => {
-	// 		// console.log("CLEANUP Fn");
-	// 		clearTimeout(timer);
-	// 	};
-	// }, [enteredEmail, enteredPassword]);
+	//UseEffect with utilitising Dependencies Array so that the effect runs whenever there is a change is given dependencies//
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			// console.log("Checking form entry...");
+			setFormIsValid(emailIsValid && passwordIsValid);
+		}, 500);
+
+		//CLEANUP Fn RUNS Before the sideEffect function from 2nd time onwards Or ONLY after the useEffect has run once(component rendered for first time) //
+		//Cleanup fn doesnt run when the component is Rendered FIRST time//
+		//Cleanup fn runs if/when the component gets unmount (though side effect doesnt run)//
+		return () => {
+			// console.log("CLEANUP Fn");
+			clearTimeout(timer);
+		};
+	}, [emailIsValid, passwordIsValid]);
 
 	const emailChangeHandler = (event) => {
 		//Using "dispatch fn" to change the state for email//
 		dispatchEmail({ type: "USER_INPUT", payload: event.target.value });
 
-		setFormIsValid(event.target.value.includes("@") && passwordState.isValid);
+		// setFormIsValid(event.target.value.includes("@") && passwordState.isValid);
 	};
 
 	const passwordChangeHandler = (event) => {
 		//Using "dispatch fn" to change the state for password//
 		dispatchPassword({ type: "USER_INPUT", payload: event.target.value });
 
-		setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
+		// setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
 	};
 
 	const validateEmailHandler = () => {
