@@ -11,26 +11,32 @@ const Login = (props) => {
 	const [passwordIsValid, setPasswordIsValid] = useState();
 	const [formIsValid, setFormIsValid] = useState(false);
 
-	// useEffect(() => {
-	// 	const timer = setTimeout(() => {
-	// 		console.log("Checking form entry...");
-	// 		setFormIsValid(enteredEmail.includes("@") && enteredPassword.trim().length > 6);
-	// 	}, 500);
+	//UseEffect with utilitising Dependencies Array so that the effect runs whenever there is a change is given dependencies//
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			// console.log("Checking form entry...");
+			setFormIsValid(enteredEmail.includes("@") && enteredPassword.trim().length > 6);
+		}, 500);
 
-	// 	return () => {
-	// 		console.log("CLEANUP Fn");
-	// 		clearTimeout(timer);
-	// 	};
-	// }, [enteredEmail, enteredPassword]);
+		//CLEANUP Fn RUNS Before the sideEffect function from 2nd time onwards Or ONLY after the useEffect has run once(component rendered for first time) //
+		//Cleanup fn doesnt run when the component is Rendered FIRST time//
+		//Cleanup fn runs if/when the component gets unmount (though side effect doesnt run)//
+		return () => {
+			// console.log("CLEANUP Fn");
+			clearTimeout(timer);
+		};
+	}, [enteredEmail, enteredPassword]);
 
 	const emailChangeHandler = (event) => {
 		setEnteredEmail(event.target.value);
-		setFormIsValid(event.target.value.includes("@") && enteredPassword.trim().length > 6);
+
+		// setFormIsValid(event.target.value.includes("@") && enteredPassword.trim().length > 6);
 	};
 
 	const passwordChangeHandler = (event) => {
 		setEnteredPassword(event.target.value);
-		setFormIsValid(event.target.value.trim().length > 6 && enteredEmail.includes("@"));
+
+		// setFormIsValid(event.target.value.trim().length > 6 && enteredEmail.includes("@"));
 	};
 
 	const validateEmailHandler = () => {

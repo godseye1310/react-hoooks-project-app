@@ -7,6 +7,7 @@ import MainHeader from "./components/MainHeader/MainHeader";
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+	//useEffect Hook is Used to handle side effects in React || side Effects RUNS ONLY Once since Dependencies Array is Empty i.e. when the component is rendered first//
 	useEffect(() => {
 		const storedUserLoggedInStatus = localStorage.getItem("isLoggedIn");
 		if (storedUserLoggedInStatus === "1") {
