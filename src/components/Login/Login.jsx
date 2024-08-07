@@ -1,8 +1,9 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, useContext } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
+import AuthContext from "../../store/auth-context";
 
 //Defining the emailReducer Function//
 //reducerfn(state,action) --> [state] gives latest state, [action] comes from dispatch fn//
@@ -28,7 +29,7 @@ const passwordReducer = (state, action) => {
 
 //useReducer Syntax//
 // const [state, dispatchFunction] = useReducer(reducerFunction, initialState, initialFunction(optional))//
-const Login = (props) => {
+const Login = () => {
 	// const [enteredEmail, setEnteredEmail] = useState("");
 	// const [emailIsValid, setEmailIsValid] = useState();
 	// const [enteredPassword, setEnteredPassword] = useState("");
@@ -88,15 +89,21 @@ const Login = (props) => {
 		dispatchPassword({ type: "INPUT_BLUR" });
 	};
 
+	const authLoginctx = useContext(AuthContext);
+
 	const submitHandler = (event) => {
 		event.preventDefault();
-		props.onLogin(emailState.value, passwordState.value);
+		authLoginctx.onLogin(emailState.value, passwordState.value);
 	};
 
 	return (
 		<Card className={classes.login}>
 			<form onSubmit={submitHandler}>
-				<div className={`${classes.control} ${emailState.isValid === false ? classes.invalid : ""}`}>
+				<div
+					className={`${classes.control} ${
+						emailState.isValid === false ? classes.invalid : ""
+					}`}
+				>
 					<label htmlFor="email">E-Mail</label>
 					<input
 						type="email"
@@ -106,7 +113,11 @@ const Login = (props) => {
 						onBlur={validateEmailHandler}
 					/>
 				</div>
-				<div className={`${classes.control} ${passwordState.isValid === false ? classes.invalid : ""}`}>
+				<div
+					className={`${classes.control} ${
+						passwordState.isValid === false ? classes.invalid : ""
+					}`}
+				>
 					<label htmlFor="password">Password</label>
 					<input
 						type="password"
