@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState, useContext } from "react";
+import React, { useEffect, useReducer, useState, useContext, useRef } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
@@ -73,28 +73,32 @@ const Login = () => {
 
 		// setFormIsValid(event.target.value.includes("@") && passwordState.isValid);
 	};
-
 	const passwordChangeHandler = (event) => {
 		//Using "dispatch fn" to change the state for password//
 		dispatchPassword({ type: "USER_INPUT", payload: event.target.value });
 
 		// setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
 	};
-
 	const validateEmailHandler = () => {
 		dispatchEmail({ type: "INPUT_BLUR" });
 	};
-
 	const validatePasswordHandler = () => {
 		dispatchPassword({ type: "INPUT_BLUR" });
 	};
 
 	const authLoginctx = useContext(AuthContext);
-
 	const submitHandler = (event) => {
 		event.preventDefault();
 		authLoginctx.onLogin(emailState.value, passwordState.value);
 	};
+
+	//useRef can be used to aacces a DOM element directly and interact with it//
+	//Ref Object will always have a single key inside it called "current" used to interact with html element//
+	const emaiRef = useRef(null);
+	// console.log(emaiRef);
+	useEffect(() => {
+		emaiRef.current.focus();
+	}, []);
 
 	return (
 		<Card className={classes.login}>
@@ -106,6 +110,7 @@ const Login = () => {
 				>
 					<label htmlFor="email">E-Mail</label>
 					<input
+						ref={emaiRef} //using ref attribute
 						type="email"
 						id="email"
 						value={emailState.value}
